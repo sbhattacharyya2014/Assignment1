@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class OrderDetails {
 
@@ -28,24 +29,39 @@ public class OrderDetails {
 	public void highestFrequency() {
 		Map<String, List<String>> itemInOrders = new HashMap<String, List<String>>();
 		List<String> items = new ArrayList<String>();
-		//Finding the unique items in all orders
+
 		try {
-			for (Order od : orders) {
-				for (String item : od.getItemsInOrder()) {
-					if (!items.contains(item))
-						items.add(item);
-				}
-			}
+			items= this.orders.stream().flatMap(x ->x.getItemsInOrder().stream()).distinct()
+					.collect(Collectors.toList());
 		} catch (NullPointerException e) {
 			// TODO Auto-generated catch block
 			System.out.println("An order item can not be null! Please check the input");
 			System.exit(1);
 		}
 		//Adding the items and orders as key value pair
-		for (String item : items) {
-			itemInOrders.put(item, findItem(item));
-		}
 		
+		itemInOrders=items
+		  .stream()
+		  .collect(Collectors.toMap(c ->c, c-> this.findItem(c)));
+		
+
+//		IntStream.rangeClosed(0, 1).forEach(e ->{
+//			String maxOrderItem = itemInOrders.entrySet().stream()
+//					.max((entry1, entry2) -> 
+//					entry1.getValue().size() > entry2.getValue().size() ? 1 : -1)
+//					.get().getKey();
+//			//Creating output string by adding delimitor
+//			String outputStr=maxOrderItem+" -> usageCount: "+itemInOrders.get(maxOrderItem).size()
+//					+ "; Corresponding Orders :"
+//					+itemInOrders.get(maxOrderItem).stream().collect(Collectors.joining(", "));
+//			
+//			System.out.println(outputStr);
+//			
+//			
+//			//Removing the highest ordered item
+//			itemInOrders.remove(maxOrderItem);
+//		});
+//		
 		for(int i=0; i<2;i++) {
 			String maxOrderItem = itemInOrders.entrySet().stream()
 					.max((entry1, entry2) -> 
